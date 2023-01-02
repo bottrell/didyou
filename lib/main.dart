@@ -37,46 +37,38 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<Character>? futureCharacters;
+  late List<Future<Character>>? futureCharacters;
 
   @override
   void initState() {
-    futureCharacters = makeHTTPRequest(1);
+    for (int i = 1; i < 100; i++) {
+      futureCharacters?.add(makeHTTPRequest(i));
+    } 
   }
 
   @override
   Widget build(BuildContext context) {
-    List x = [];
-    for (int i = 2; i < 200; i++) {
-      x.add(makeHTTPRequest(i));
-    }
-
     return MaterialApp(
-        title: "Hello, World!",
-        home: Scaffold(
-          appBar: AppBar(
-            title: Container(
-                width: double.infinity,
-                child: FutureBuilder<Character>(
-                  future: futureCharacters!,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data!.name);
-                    } else if (snapshot.hasError) {
-                      return Text('${snapshot.error}');
-                    }
-                    // By default, show a loading spinner.
-                    return const CircularProgressIndicator();
-                  },
-                )),
-          ),
-          body: ListView(
-            children: [
-              //need to create a custom widget to display a character
-              ...(x as List<dynamic>)
-                  .map((item) => item),
-            ],
-          ),
-        ));
+      title: "Hello, World!",
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Rick and Morty Rick and Morty"),
+        ),
+        body: Container(
+            width: double.infinity,
+            child: FutureBuilder<Character>(
+              future: futureCharacters![20],
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data!.name);
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
+              },
+            )),
+      ),
+    );
   }
 }
